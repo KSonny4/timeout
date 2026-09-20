@@ -23,21 +23,36 @@ installation is authorised, install this package. See
 
 ## Install with Homebrew
 
+You have two good options.
+
+### Option 1: install GNU coreutils
+
+Homebrew Core already ships GNU Coreutils, and that package includes `timeout`:
+
+```sh
+brew install coreutils
+timeout --version
+```
+
+Use this if you are happy to install the full GNU Coreutils suite.
+
+### Option 2: install only timeout
+
+If you only want `timeout`, this project provides it as a standalone package:
+
 ```sh
 brew tap ksonny4/timeout https://github.com/KSonny4/timeout
 brew install ksonny4/timeout/timeout
 timeout --version
 ```
 
-This custom tap uses the repository URL explicitly because its name is `timeout`,
-not `homebrew-timeout`. Review and approve the formula if Homebrew requests trust.
-The formula builds from checksum-pinned GNU source and installs only `timeout`.
-It needs Apple's Command Line Tools, which Homebrew normally checks for.
+The custom tap builds from checksum-pinned GNU source and installs only `timeout`.
+It uses the explicit repository URL because the project repository is named
+`timeout`, not `homebrew-timeout`.
 
-**Already have coreutils? Keep it.** `brew install coreutils` also provides GNU
-`timeout`. These packages conflict because both install the same command.
-There is no reason to remove a working GNU installation just to use this one.
-Check `command -v timeout` and `timeout --version` first.
+**Already have coreutils? Keep it.** There is no reason to replace a working GNU
+`timeout` installation with this standalone package. Check `command -v timeout`
+and `timeout --version` first.
 
 ## Use
 
