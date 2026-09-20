@@ -34,7 +34,7 @@ After publication, the release workflow passes its exact version to
 checks its GitHub asset SHA-256 and equality with the tagged source, and installs
 the selected archive into an isolated user prefix containing spaces. It runs the
 repository suite against that installed executable, verifies overwrite refusal
-and repeats four signal cases 25 times each with no retry-to-pass behaviour.
+and repeats five signal cases 25 times each with no retry-to-pass behaviour.
 A failed post-publication check requires investigation; it does not replace or
 remove the release automatically. Publish a new version if the shipped bytes need
 repair.
