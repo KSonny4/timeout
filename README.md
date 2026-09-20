@@ -62,11 +62,22 @@ python3 tools/timeoutctl.py install --prefix "$HOME/.local"
 export PATH="$HOME/.local/bin:$PATH"
 ```
 
-For a published binary release, download and inspect `install.sh` from the
-matching release tag, then run:
+Prebuilt binaries are published in
+[release v9.12.0](https://github.com/KSonny4/timeout/releases/tag/v9.12.0).
+Download the versioned installer:
 
 ```sh
-sh install.sh --version 9.12.0 --prefix "$HOME/.local"
+curl --fail --location --proto '=https' --proto-redir '=https' \
+  --output timeout-install-9.12.0.sh \
+  https://github.com/KSonny4/timeout/releases/download/v9.12.0/install.sh
+```
+
+Inspect that script before executing it, then run:
+
+```sh
+sh timeout-install-9.12.0.sh --version 9.12.0 --prefix "$HOME/.local"
+export PATH="$HOME/.local/bin:$PATH"
+timeout --version
 ```
 
 The installer requires that version's release assets and SHA256SUMS to exist.
@@ -84,12 +95,18 @@ upstream timeout tests are checked against that archive after building and testi
 The build prepares GNU's generated headers before compiling only `src/timeout`.
 Additional GNU commands built by the test harness are never installed.
 
-CI runs all **six GNU 9.12 timeout test scripts**, plus **114 local contract and
-packaging tests**, on four native OS/architecture runners. Homebrew installation
-and `brew test` have their own Mac jobs. Actual results and skips are retained
-as JSON and upstream logs. [The first verified implementation](docs/verification.md)
-passed all six CI jobs. See [Actions](https://github.com/KSonny4/timeout/actions)
-for later candidates; workflow configuration alone is not a passing result.
+CI runs all **six GNU 9.12 timeout test scripts**, plus **115 repository tests**
+covering the executable, packaging, installer and signal-fixture regression, on
+four native OS/architecture runners. Homebrew installation and `brew test` have
+their own Mac jobs. A separate public-install workflow downloads the published
+installer and binaries, runs the current suite against the installed executable,
+checks overwrite refusal and runs 100 repeated signal tests per target.
+
+Actual results and skips are retained as JSON and upstream logs. The
+[verification record](docs/verification.md) distinguishes the released binary,
+verification-harness revision, historical 114-test results and subsequent checks.
+See [Actions](https://github.com/KSonny4/timeout/actions) for later candidates;
+workflow configuration alone is not a passing result.
 
 The contract is GNU 9.12's native platform behaviour. Linux-only parent-death
 signals and PID namespaces cannot be reproduced identically on macOS. English
