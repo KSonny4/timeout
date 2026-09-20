@@ -12,6 +12,8 @@ jobs:
     needs: verify
     runs-on: ubuntu-24.04
     timeout-minutes: 10
+    outputs:
+      version: ${{ steps.publish.outputs.version }}
     permissions:
       contents: write
     steps:
@@ -27,7 +29,8 @@ jobs:
         with:
           pattern: evidence-*
           path: evidence
-      - name: Verify manifest and publish immutable release
+      - name: Verify manifest and publish versioned release
+        id: publish
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
@@ -49,3 +52,9 @@ jobs:
             "$version" "$GITHUB_SHA" "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID" > dist/release-notes.md
           gh release create "$tag" --target "$GITHUB_SHA" --title "timeout $version" \
             --notes-file dist/release-notes.md dist/*.tar.gz dist/SHA256SUMS dist/install.sh
+          printf 'version=%s\n' "$version" >> "$GITHUB_OUTPUT"
+  public-install:
+    needs: publish
+    uses: ./.github/workflows/public-install.yml
+    with:
+      version: ${{ needs.publish.outputs.version }}
