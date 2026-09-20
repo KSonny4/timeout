@@ -58,7 +58,7 @@ jobs:
             if grep 'not found' .build/reports/linkage.txt; then exit 1; fi
           fi
       - name: Upload distribution
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: distribution-${{ matrix.runner }}
           path: dist/
@@ -66,7 +66,7 @@ jobs:
           retention-days: 14
       - name: Retain actual results and build logs
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: evidence-${{ matrix.runner }}
           include-hidden-files: true
@@ -107,7 +107,7 @@ jobs:
           TIMEOUT_BIN="$(brew --prefix ci/timeout/timeout)/bin/timeout" TIMEOUT_REQUIRE_VERSION=9.12 python3 tools/run_tests.py
       - name: Retain Homebrew evidence
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: homebrew-${{ matrix.runner }}
           include-hidden-files: true
