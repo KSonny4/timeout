@@ -1,112 +1,153 @@
 # Verification record: 20 September 2026
 
-## Released implementation and original native builds
+## Final verified outcome
 
-The released runtime is implementation commit
-`7668f5aef89b4d20897ccf8087f04dc3755ec4bf`, tag `v9.12.0`.
-GNU reference: coreutils 9.12, unchanged source.
+Released GNU runtime: `7668f5aef89b4d20897ccf8087f04dc3755ec4bf`, tag **v9.12.0**.
+Final verification harness: `cad0d0052b56b902a8d2c371d06c15876f341065`.
+GNU reference: unchanged coreutils **9.12** source and timeout-specific tests.
+Later documentation-only commits do not change these tested identities.
 
-[Native compatibility run 35511874592](https://github.com/KSonny4/timeout/actions/runs/35511874592)
-completed successfully across all six jobs. The four native artefact archives
-were downloaded and their build.json, upstream.json, contract.json and linkage
-reports inspected. Homebrew job results were read from GitHub Actions; the ARM
-Homebrew job log explicitly reports `Ran 114 tests` and `OK`.
+[Native compatibility run 35515616455](https://github.com/KSonny4/timeout/actions/runs/35515616455)
+passed all six jobs: four native source build/test/package jobs and both Homebrew
+installation jobs. [Public installation run 35515616466](https://github.com/KSonny4/timeout/actions/runs/35515616466)
+passed all four native jobs against the actual downloaded v9.12.0 executables.
 
-| Native target | GNU timeout scripts | Repository tests at release | Executable bytes | Distribution and linkage checks |
+| Native target | GNU timeout scripts | Current repository suite | Repeated signal tests against public binary | Public installation and overwrite refusal |
 | --- | --- | --- | --- | --- |
-| macOS 15.7.9 ARM64 | 5 passed, 1 expected skip | 114 passed, 0 skipped | 130,872 | Passed |
-| macOS 15.7.9 x86_64 | 5 passed, 1 expected skip | 114 passed, 0 skipped | 113,472 | Passed |
-| Ubuntu 24.04 x86_64, glibc 2.39 | 6 passed, 0 skipped | 114 passed, 0 skipped | 207,488 | Passed |
-| Ubuntu 24.04 ARM64, glibc 2.39 | 6 passed, 0 skipped | 114 passed, 0 skipped | 229,040 | Passed |
+| macOS 15.7.9 ARM64 | 5 passed, 1 expected skip | 125 passed | 125 passed | Passed |
+| macOS 15.7.9 x86_64 | 5 passed, 1 expected skip | 125 passed | 125 passed | Passed |
+| Ubuntu 24.04 x86_64, glibc 2.39 | 6 passed | 125 passed | 125 passed | Passed |
+| Ubuntu 24.04 ARM64, glibc 2.39 | 6 passed | 125 passed | 125 passed | Passed |
 
-Both Homebrew jobs built the exact candidate formula from source, ran `brew test`
-and passed all 114 repository tests against the installed executable. All tests
-reported zero failures/errors. The Mac skip is `tests/timeout/init-parent.sh`,
-which depends on Linux PID namespaces. No other upstream skip was accepted.
+The repository and repeated-test suites report zero failures, errors and skips.
+The sole accepted upstream skip on each Mac is `tests/timeout/init-parent.sh`,
+which requires Linux PID namespaces. The six upstream entries are scripts with
+multiple assertions, not six individual assertions. Shared tests for unrelated
+coreutils programs are outside this standalone test claim.
 
-The original 114 repository tests comprise 93 executable contract tests and 21
-packaging/installer tests. The six upstream scripts each contain their own
-assertions; script counts must not be presented as individual assertion counts.
-Native jobs also reran the repository suite against the executable extracted from
-the final archive. Packaging fixture tests alone do not prove that public-release
-download installation works.
+The current 125 repository tests comprise 94 executable/signal-fixture cases,
+21 packaging/installer cases and 10 cleanup guard cases. The separate repeated
+suite runs five signal methods 25 times each; it adds no new unique requirements.
+Native jobs also test the executable extracted from the final archive. Both
+Homebrew jobs install the exact candidate formula, run `brew test` and the
+repository suite against the installed binary.
 
-The Apple Silicon binary links only to `/usr/lib/libSystem.B.dylib`. Binary
-archives are larger than the executable because complete GNU source, licensing
-and the build recipe are deliberately included.
+### Evidence inspected
 
-## Publication and actual public installation
+All four final public evidence ZIPs were downloaded. Their SHA-256 values were
+checked against GitHub metadata, and public-install.json, contract.json and
+signal-stress.json were inspected. The final native Apple Silicon evidence ZIP
+was also downloaded and its digest, contract and upstream reports inspected.
+Other final native/Homebrew conclusions were read from GitHub job/step results.
+The durable measured summary, identities and digests are in
+[evidence/public-install-v9.12.0-cleanup.json](evidence/public-install-v9.12.0-cleanup.json).
+Workflow artefacts expire after 14 days; this checked-in summary preserves the
+measured outcome, not the complete raw logs or a cryptographic attestation.
+
+Public installation downloads the versioned installer, checks its GitHub asset
+SHA-256 and compares it with tagged source. The installer verifies the downloaded
+binary archive checksum. Installation uses an isolated user prefix containing
+spaces, without sudo. A second installation must refuse to overwrite the existing
+executable, and its before/after hashes must match. Release and harness source
+identities are recorded separately. These checks passed on every target above.
+
+## Original release and historical evidence
+
+[Native run 35511874592](https://github.com/KSonny4/timeout/actions/runs/35511874592)
+passed all six jobs for the released implementation. All four original native
+artefact archives were downloaded and their build, upstream, contract and linkage
+reports inspected. Both Homebrew jobs passed; the ARM Homebrew log explicitly
+reported 114 tests and OK.
+
+| Released target | Original repository tests | Executable bytes | Original GNU scripts |
+| --- | --- | --- | --- |
+| macOS ARM64 | 114 passed | 130,872 | 5 passed, 1 expected skip |
+| macOS x86_64 | 114 passed | 113,472 | 5 passed, 1 expected skip |
+| Linux x86_64 | 114 passed | 207,488 | 6 passed |
+| Linux ARM64 | 114 passed | 229,040 | 6 passed |
+
+The original suite had 93 executable cases and 21 packaging/installer cases.
+The Apple Silicon binary links only to `/usr/lib/libSystem.B.dylib`.
+Archives are larger because they include complete GNU source, licences and the
+build recipe. The final public-install reports confirm the same executable sizes.
 
 [Release run 35512205946](https://github.com/KSonny4/timeout/actions/runs/35512205946)
-completed successfully with four native jobs, two Homebrew jobs and publication.
-[Release v9.12.0](https://github.com/KSonny4/timeout/releases/tag/v9.12.0) was published
-at 2026-09-20T13:20:25Z. Its four platform archives, checksums, installer and original
-verification evidence are public. No v9.12.0 source, tag or asset was replaced by
-the continuation described below.
+passed four native jobs, two Homebrew jobs and publication.
+[Release v9.12.0](https://github.com/KSonny4/timeout/releases/tag/v9.12.0)
+was published at **2026-09-20T13:20:25Z**, with four platform archives, checksums,
+installer and original verification evidence. No v9.12.0 source, tag or asset
+was replaced during subsequent fixture corrections.
 
-[Public installation run 35514608768](https://github.com/KSonny4/timeout/actions/runs/35514608768)
-subsequently passed on all four native targets. It tested the actual downloaded
-v9.12.0 binaries using verification harness
-`2411db902cab04acafa04a99aa52eda9d7d49078`. This harness includes one additional
-fixture regression, bringing the repository suite to 115 tests.
+[Intermediate public run 35514608768](https://github.com/KSonny4/timeout/actions/runs/35514608768)
+passed on all four platforms with harness
+`2411db902cab04acafa04a99aa52eda9d7d49078`: 115 repository tests and 100 repeated
+signal tests each. All four ZIP digests and reports were inspected. Its historical
+summary remains in [evidence/public-install-v9.12.0.json](evidence/public-install-v9.12.0.json).
+Those counts are historical and are not silently relabelled as the final 125-test
+harness result.
 
-| Public installer target | Current suite | Repeated signal tests | Public install and overwrite refusal |
-| --- | --- | --- | --- |
-| macOS ARM64 | 115 passed, 0 skipped | 100 passed, 0 skipped | Passed |
-| macOS x86_64 | 115 passed, 0 skipped | 100 passed, 0 skipped | Passed |
-| Linux x86_64 | 115 passed, 0 skipped | 100 passed, 0 skipped | Passed |
-| Linux ARM64 | 115 passed, 0 skipped | 100 passed, 0 skipped | Passed |
+## Retained failures and harness corrections
 
-Every row has zero failures and errors. The installer was downloaded from its
-public release URL, checked against GitHub's asset SHA-256, and compared with the
-tagged installer source before execution. The binary archive's own checksum was
-checked by that installer. Installation used a temporary user prefix containing
-spaces, without sudo. A second installation refused to overwrite the executable,
-and before/after binary hashes matched.
+### Signal fixture interpreter shutdown
 
-The 100 repeated tests are four existing signal-related methods repeated 25 times,
-not 100 additional unique contract requirements. All four evidence ZIPs were
-downloaded, their GitHub archive digests checked, and public-install.json,
-contract.json and signal-stress.json inspected. Their durable measured summary
-and artifact identities are in
-[evidence/public-install-v9.12.0.json](evidence/public-install-v9.12.0.json).
-The workflow's downloadable artefacts expire after 14 days.
+[First live run 35514156386](https://github.com/KSonny4/timeout/actions/runs/35514156386)
+installed successfully on all four targets. Apple Silicon failed one subtest:
+numeric SIGUSR1 returned 158 instead of the fixture's requested 41. The other
+three targets passed their entire suite and overwrite checks.
 
-## Failure retained and fixture correction
+The fixture already waited for readiness after the handler was installed.
+GNU `src/timeout.c:cleanup` signals the child PID and then its group. CPython
+3.13.15 `Modules/signalmodule.c:_PySignal_Fini` resets custom handlers to SIG_DFL
+during `sys.exit` finalisation. A second delivery during that interval is a
+source-supported explanation; no kernel trace established the exact interleaving.
 
-The first live check,
-[run 35514156386](https://github.com/KSonny4/timeout/actions/runs/35514156386),
-installed successfully on all four targets. Its Apple Silicon suite failed one
-subtest: numeric SIGUSR1 returned 158 instead of the fixture's requested 41.
-The other three targets passed their complete suite and overwrite checks.
+Commit `76d880b7e1fbcfc114d9752a9a18231129f6cbd9` changes disposable signal/exit
+fixtures to `os._exit`. Expected statuses, aliases, readiness, watchdogs and
+cleanup remain enforced. The added deterministic regression installs an atexit
+hook that would return 99 with `sys.exit`, while immediate exit returns 41.
+This was checked locally and included in native tests. GNU's behaviour for real
+commands, including duplicate signal delivery, is unchanged.
 
-The fixture already waited for the child to print readiness after installing its
-handler. GNU's unchanged `src/timeout.c:cleanup` signals the child PID and then its
-process group. CPython 3.13.15 `Modules/signalmodule.c:_PySignal_Fini` resets custom
-handlers to SIG_DFL during `sys.exit` finalisation. A second signal arriving in
-that shutdown interval is a source-supported explanation of the observed status;
-no kernel trace was taken, so the exact interleaving is not claimed as proven.
+A bounded local diagnostic against GNU 9.7 passed ten old and ten corrected
+invocations. It did not reproduce the intermittent race and is not GNU 9.12
+native evidence. A larger local attempt hit its execution watchdog and produced
+no useful conclusion.
 
-Commit `76d880b7e1fbcfc114d9752a9a18231129f6cbd9` makes the disposable signal/exit
-fixtures use `os._exit` instead. Expected statuses, signal aliases, readiness,
-watchdogs and cleanup remain enforced. The new
-`test_signal_exit_fixture_avoids_interpreter_shutdown` installs an atexit hook
-that would produce status 99 with `sys.exit`, making the fixture regression
-deterministic without relying on a particular scheduling race. No GNU code,
-upstream script, installer or release binary changed; no failure was skipped,
-marked expected or retried until green. The passing run above also repeats the
-affected methods on every target.
+### Post-exit process-group cleanup
 
-This preserves GNU behaviour for real commands, including any duplicate signal
-delivery; the fixture now deliberately exits immediately with its requested status.
-A local diagnostic against GNU 9.7 passed ten old and ten corrected invocations,
-which did not reproduce the intermittent race and is not native GNU 9.12 proof.
+[Fresh native run 35514608769](https://github.com/KSonny4/timeout/actions/runs/35514608769)
+passed both Homebrew jobs, both Linux native jobs and Intel macOS. Apple Silicon
+passed the five applicable unchanged GNU scripts and skipped the Linux-only one,
+then reported zero assertion failures and one repository cleanup error:
+
+```text
+test_kill_after_terminates_term_ignoring_child
+signal_fixture -> finally -> cleanup -> os.killpg(..., SIGKILL)
+PermissionError: [Errno 1] Operation not permitted
+```
+
+This occurred after `communicate` had collected the monitored process. The
+failure archive, ID 10605394903, was downloaded and inspected; SHA-256:
+`727258357df497ac98c956380abc73697d64b71fd6171f9cc9216311bc1bf63b`.
+No process snapshot or kernel trace established why that specific killpg failed.
+
+The test-only `process_cleanup.py` helper still signals the isolated group and
+always reaps the direct child. PermissionError is accepted only when the leader
+has exited and a bounded successful native `ps` snapshot shows no live group
+members. A live leader/member, unknown state, failed inspection, or malformed
+snapshot remains an error. Ten guard tests cover those branches and native ps
+format; they passed locally and in the final native/public suites. The affected
+kill-after case was also added to repeated tests on all four targets.
+
+No GNU implementation, original upstream test, formula, installer or released
+binary changed for either correction. No failed test was skipped or marked
+expected, and no unchanged failed run was retried until green.
 
 Source references:
 - https://github.com/coreutils/coreutils/blob/v9.12/src/timeout.c
 - https://github.com/python/cpython/blob/v3.13.15/Modules/signalmodule.c
 
-## Reproduction
+## Reproduction and boundaries
 
 ```sh
 python3 tools/timeoutctl.py build
@@ -114,35 +155,22 @@ python3 tools/timeoutctl.py test
 python3 tools/timeoutctl.py package
 ```
 
-To repeat real download/installation verification, run Actions > Published
-installation with version `9.12.0`. The workflow records the released binary source
-commit separately from the current test-harness commit. See
-[releasing.md](releasing.md) for the post-publication job used by future releases.
+Use Actions > Published installation with version `9.12.0` for live download
+verification. See [releasing.md](releasing.md) for future releases' post-publication
+job; the original v9.12.0 publication predates that job.
 
-Linux CI explicitly enables the test-only root PID-namespace retry on disposable
-runners. Normal local testing does not silently use sudo.
+Linux CI enables its test-only root PID-namespace retry on disposable runners.
+Normal local testing does not silently use sudo. An early local harness pass
+against GNU 9.7 was not counted as native 9.12 proof. The first build attempt
+exposed missing Automake BUILT_SOURCES preparation, corrected without editing GNU.
 
-An earlier local harness run passed 114 tests against the container's GNU 9.7.
-That established the harness worked; it was not counted as native GNU 9.12 proof.
-The first native attempt exposed missing Automake BUILT_SOURCES preparation.
-The passing release commit fixes build order without editing GNU's implementation.
+Results cover the exact native platforms above. They do not establish every older
+macOS release, Linux libc, scheduling race or shared GNU helper. Source builds use
+the local compiler's normal deployment target; no oldest macOS version is claimed.
+Messages are English because translated catalogues are not shipped. OS signal
+numbers, error wording, timer precision and Linux-only kernel facilities retain
+their platform-specific behaviour. See [compatibility.md](compatibility.md).
 
-## Platform and publication limits
-
-These native results cover the exact platforms above. They do not prove every
-older macOS point release, every Linux libc or every possible signal timing race.
-Use the Homebrew/source build on a different compatible platform rather than
-assuming a prebuilt archive supports it. Source builds use the local compiler's
-normal deployment target; no oldest-supported-macOS claim has been validated.
-
-Messages are English because translated GNU catalogues are not shipped. Kernel
-limitations and all intentional differences are in [compatibility.md](compatibility.md).
-All timeout-specific GNU scripts are selected; suites for unrelated coreutils
-programs and every shared GNU helper are outside this standalone test claim.
-
-The original source-build results and subsequent public-install results refer to
-different explicit commits. They are not a claim that every later branch or
-workflow run passed. Check the exact candidate in Actions for subsequent changes.
-No Homebrew core acceptance, bottles, code-signing/notarisation, immutable-release
-setting or model-registry registration is claimed. Cognee memory reconciliation
-is tracked separately in issue #5 and is not claimed complete.
+No Homebrew core acceptance, bottles, Apple signing/notarisation, enabled GitHub
+immutable-release setting or automatic model registration is claimed. Factual
+Cognee memory reconciliation remains pending in issue #5; CLI delivery is verified.
