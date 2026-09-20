@@ -157,6 +157,7 @@ jobs:
               'test_external_term_is_forwarded_without_timeout_status',
               'test_custom_signal_name_is_delivered',
               'test_signal_exit_fixture_avoids_interpreter_shutdown',
+              'test_kill_after_terminates_term_ignoring_child',
           ]
           repetitions = 25
           suite = unittest.TestSuite(TimeoutContract(name) for _ in range(repetitions) for name in names)
