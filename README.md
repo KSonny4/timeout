@@ -15,7 +15,7 @@ timeout --version
 ```
 
 This custom tap uses the repository URL explicitly because its name is `timeout`,
-not `homebrew-timeout`. Review and approve the tap if Homebrew requests trust.
+not `homebrew-timeout`. Review and approve the formula if Homebrew requests trust.
 The formula builds from checksum-pinned GNU source and installs only `timeout`.
 It needs Apple's Command Line Tools, which Homebrew normally checks for.
 
@@ -72,9 +72,10 @@ sh install.sh --version 9.12.0 --prefix "$HOME/.local"
 The installer requires that version's release assets and SHA256SUMS to exist.
 It never uses `sudo`, edits shell configuration, or overwrites another executable.
 Checksums protect transfer integrity; they are not independent publisher signatures.
-Manual extraction of the release archive also works. Binary targets are macOS
-15+ and glibc Linux built on Ubuntu 24.04, each for ARM64 and x86_64. Other OS
-versions may build from source but are not part of this native CI matrix.
+Manual extraction of the release archive also works. Native release binaries are
+built and tested on macOS 15.7.9 and Ubuntu 24.04/glibc 2.39, each for ARM64 and
+x86_64. Other OS versions may build locally through Homebrew or the source recipe;
+compatibility of prebuilt archives with older releases is not established.
 
 ## Compatibility and verification
 
@@ -86,8 +87,9 @@ Additional GNU commands built by the test harness are never installed.
 CI runs all **six GNU 9.12 timeout test scripts**, plus **114 local contract and
 packaging tests**, on four native OS/architecture runners. Homebrew installation
 and `brew test` have their own Mac jobs. Actual results and skips are retained
-as JSON and upstream logs. See [Actions](https://github.com/KSonny4/timeout/actions)
-for the candidate's result; workflow configuration alone is not a passing result.
+as JSON and upstream logs. [The first verified implementation](docs/verification.md)
+passed all six CI jobs. See [Actions](https://github.com/KSonny4/timeout/actions)
+for later candidates; workflow configuration alone is not a passing result.
 
 The contract is GNU 9.12's native platform behaviour. Linux-only parent-death
 signals and PID namespaces cannot be reproduced identically on macOS. English
@@ -99,9 +101,11 @@ No finite test suite proves every possible timing race or kernel state.
 ## Agents and maintainers
 
 [llms.txt](llms.txt) provides install/usage pointers. [AGENTS.md](AGENTS.md) supplies
-repository development instructions. These files help clients that read them;
-they do not automatically teach ChatGPT or register the package with every agent.
-Public documentation, a working tap and release assets are the distribution paths.
+repository development instructions. The install/use skill lives at
+[.agents/skills/gnu-timeout/SKILL.md](.agents/skills/gnu-timeout/SKILL.md).
+These files help clients that read them; they do not automatically teach ChatGPT
+or register the package with every agent. Public documentation, a working tap
+and release assets are the distribution paths.
 
 See [release procedure](docs/releasing.md) and [contribution rules](CONTRIBUTING.md).
 GNU's executable and source are GPL-3.0-or-later. Original packaging/test code in
