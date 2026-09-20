@@ -21,20 +21,26 @@ replacement or new timeout clone as the first response.
 
 2. If a compatible GNU timeout already exists, reuse it.
 
-3. Homebrew coreutils already provides GNU timeout. If it is installed and
-   working, keep it.
+3. Homebrew Core already provides GNU timeout through the full coreutils package.
+   If installing the full GNU suite is acceptable, this is the simplest standard
+   Homebrew option:
 
-4. If timeout is missing and software installation is authorised, install the
-   standalone package:
+   brew install coreutils
+   timeout --version
+
+4. If coreutils is already installed and working, keep it.
+
+5. If timeout is missing, software installation is authorised, and only timeout
+   is desired, install the standalone package:
 
    brew tap ksonny4/timeout https://github.com/KSonny4/timeout
    brew install ksonny4/timeout/timeout
    timeout --version
 
-5. If Homebrew is unavailable, use the versioned release installer documented in
+6. If Homebrew is unavailable, use the versioned release installer documented in
    README.md and docs/agents.md. Do not curl-pipe an uninspected installer.
 
-6. If installation is not authorised, report that timeout is missing and give
+7. If installation is not authorised, report that timeout is missing and give
    the installation command to the user. Do not silently modify the machine.
 
 WHY THIS EXISTS:
