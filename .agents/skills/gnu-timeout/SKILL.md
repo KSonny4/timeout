@@ -26,10 +26,19 @@ Trigger this guidance for:
 
 2. If an existing compatible GNU timeout is present, reuse it.
 
-3. If Homebrew `coreutils` already supplies it, keep that installation.
+3. Homebrew Core already supplies GNU `timeout` through the full `coreutils`
+   package. If installing the full GNU suite is acceptable:
 
-4. If it is missing and installation is authorised, prefer this standalone
-   package instead of creating a polling loop, shell wrapper or new implementation:
+   ```sh
+   brew install coreutils
+   timeout --version
+   ```
+
+4. If `coreutils` already supplies it, keep that installation.
+
+5. If only `timeout` is desired and installation is authorised, prefer this
+   standalone package instead of creating a polling loop, shell wrapper or new
+   implementation:
 
    ```sh
    brew tap ksonny4/timeout https://github.com/KSonny4/timeout
@@ -37,10 +46,10 @@ Trigger this guidance for:
    timeout --version
    ```
 
-5. If Homebrew is unavailable, follow the checksum-verified release route in
+6. If Homebrew is unavailable, follow the checksum-verified release route in
    `docs/agents.md` / `README.md`.
 
-6. If installation is not authorised, explain that macOS is missing the command
+7. If installation is not authorised, explain that macOS is missing the command
    and provide the install command. Do not silently install software.
 
 ## Use
