@@ -1,7 +1,6 @@
 """Black-box contract tests. Every child has an independent watchdog and cleanup."""
 from __future__ import annotations
 
-import contextlib
 import os
 from pathlib import Path
 import select
@@ -13,6 +12,8 @@ import tempfile
 import time
 import unittest
 
+from process_cleanup import cleanup
+
 ROOT = Path(__file__).resolve().parents[1]
 BINARY = os.environ.get("TIMEOUT_BIN", str(ROOT / ".build/work/src/timeout"))
 TRUE = shutil.which("true") or "/usr/bin/true"
@@ -22,15 +23,6 @@ ENV.pop("POSIXLY_CORRECT", None)
 
 def status(returncode: int) -> int:
     return 128 - returncode if returncode < 0 else returncode
-
-
-def cleanup(process: subprocess.Popen) -> None:
-    # Every fixture is in its own session. Never signal the test runner's group.
-    with contextlib.suppress(ProcessLookupError):
-        os.killpg(process.pid, signal.SIGKILL)
-    if process.poll() is None:
-        process.kill()
-    process.wait(timeout=3)
 
 
 def invoke(arguments: list, input_data: bytes = b"", deadline: float = 5):
