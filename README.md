@@ -95,18 +95,18 @@ upstream timeout tests are checked against that archive after building and testi
 The build prepares GNU's generated headers before compiling only `src/timeout`.
 Additional GNU commands built by the test harness are never installed.
 
-CI runs all **six GNU 9.12 timeout test scripts**, plus **115 repository tests**
-covering the executable, packaging, installer and signal-fixture regression, on
+CI runs all **six GNU 9.12 timeout test scripts**, plus **125 repository tests**
+covering the executable, packaging, installer and fixture/cleanup regressions, on
 four native OS/architecture runners. Homebrew installation and `brew test` have
 their own Mac jobs. A separate public-install workflow downloads the published
 installer and binaries, runs the current suite against the installed executable,
-checks overwrite refusal and runs 100 repeated signal tests per target.
+checks overwrite refusal and runs 125 repeated signal tests per target.
 
 Actual results and skips are retained as JSON and upstream logs. The
 [verification record](docs/verification.md) distinguishes the released binary,
-verification-harness revision, historical 114-test results and subsequent checks.
-See [Actions](https://github.com/KSonny4/timeout/actions) for later candidates;
-workflow configuration alone is not a passing result.
+verification-harness revision, historical 114/115-test results and final 125-test
+checks. See [Actions](https://github.com/KSonny4/timeout/actions) for later
+candidates; workflow configuration alone is not a passing result.
 
 The contract is GNU 9.12's native platform behaviour. Linux-only parent-death
 signals and PID namespaces cannot be reproduced identically on macOS. English
