@@ -1,0 +1,10 @@
+{
+  "project": "GNU coreutils",
+  "version": "9.12",
+  "url": "https://ftp.gnu.org/gnu/coreutils/coreutils-9.12.tar.xz",
+  "mirror": "https://ftpmirror.gnu.org/coreutils/coreutils-9.12.tar.xz",
+  "sha256": "a480198559733e9b3da999e90543ac6f888a2caa544d8d664c5a1f17e528e210",
+  "configure": ["--disable-nls", "--disable-dependency-tracking", "--without-libgmp", "--without-selinux"],
+  "checksum_source": "https://github.com/Homebrew/homebrew-core/blob/main/Formula/c/coreutils.rb",
+  "checksum_source_blob": "022fb0c3f87a0acf1c5952d544f0d271e4fa7f07"
+}
