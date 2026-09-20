@@ -57,6 +57,15 @@ def wait_file(path: Path, deadline: float = 3) -> None:
     raise AssertionError(f"Fixture did not create {path.name}")
 
 
+def signal_exit_child(signum: int, exit_code: int) -> str:
+    # GNU signals both the child PID and its group. Python finalisation resets
+    # handlers to SIG_DFL, so sys.exit can race with the second delivery.
+    # A disposable fixture exits immediately to measure GNU's status handling.
+    return ("import os,signal,time;"
+            f"signal.signal({int(signum)},lambda *_:os._exit({exit_code}));"
+            "print('ready',flush=True);time.sleep(30)")
+
+
 class TimeoutContract(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -181,22 +190,26 @@ class TimeoutContract(unittest.TestCase):
             process.stderr.close()
 
     def test_trapped_signal_preserves_custom_exit(self):
-        child = ("import signal,time,sys; signal.signal(signal.SIGTERM,lambda *_:sys.exit(42));"
-                 "print('ready',flush=True);time.sleep(30)")
+        child = signal_exit_child(signal.SIGTERM, 42)
         self.assertEqual(self.signal_fixture(["--preserve-status"], child)[0], 42)
         self.assertEqual(self.signal_fixture([], child)[0], 124)
 
     def test_external_term_is_forwarded_without_timeout_status(self):
-        child = ("import signal,time,sys; signal.signal(signal.SIGTERM,lambda *_:sys.exit(42));"
-                 "print('ready',flush=True);time.sleep(30)")
+        child = signal_exit_child(signal.SIGTERM, 42)
         self.assertEqual(self.signal_fixture([], child, signal.SIGTERM)[0], 42)
 
     def test_custom_signal_name_is_delivered(self):
-        child = ("import signal,time,sys; signal.signal(signal.SIGUSR1,lambda *_:sys.exit(41));"
-                 "print('ready',flush=True);time.sleep(30)")
+        child = signal_exit_child(signal.SIGUSR1, 41)
         for sig in ("USR1", "SIGUSR1", "sigusr1", str(signal.SIGUSR1), str(128 + signal.SIGUSR1)):
             with self.subTest(signal=sig):
                 self.assertEqual(self.signal_fixture(["-s", sig, "--preserve-status"], child)[0], 41)
+
+    def test_signal_exit_fixture_avoids_interpreter_shutdown(self):
+        # This would return 99 with sys.exit, making the regression deterministic
+        # without requiring a particular kernel scheduling interleaving.
+        child = ("import atexit,os;atexit.register(lambda:os._exit(99));"
+                 + signal_exit_child(signal.SIGUSR1, 41))
+        self.assertEqual(self.signal_fixture(["-sUSR1", "--preserve-status"], child)[0], 41)
 
     def test_kill_after_terminates_term_ignoring_child(self):
         child = ("import signal,time; signal.signal(signal.SIGTERM,signal.SIG_IGN);"
