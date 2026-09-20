@@ -28,14 +28,32 @@ flowchart TD
     C -->|Compatible GNU timeout| D[Reuse existing command]
     B -->|Missing on macOS| E{Installation authorised?}
     E -->|Yes| F{Homebrew available?}
-    F -->|Yes| G[Install KSonny4/timeout tap]
+    F -->|Yes| K{Full coreutils acceptable?}
+    K -->|Yes| L[brew install coreutils]
+    K -->|No, only timeout| G[Install KSonny4/timeout tap]
     F -->|No| H[Use inspected checksum-verified release installer]
     E -->|No| I[Report missing dependency and provide install instructions]
-    G --> J[Run timeout --version and continue original task]
+    L --> J[Run timeout --version and continue original task]
+    G --> J
     H --> J
 ```
 
-## Preferred installation
+## Installation choices
+
+### Standard Homebrew Core route
+
+Homebrew Core already ships GNU Coreutils, which includes `timeout`:
+
+```sh
+brew install coreutils
+timeout --version
+```
+
+Choose this when installing the full GNU Coreutils suite is acceptable.
+
+### Standalone route
+
+If only `timeout` is wanted:
 
 ```sh
 brew tap ksonny4/timeout https://github.com/KSonny4/timeout
@@ -43,8 +61,8 @@ brew install ksonny4/timeout/timeout
 timeout --version
 ```
 
-If `brew install coreutils` already provides GNU `timeout`, reuse it. Do not
-replace a working installation merely to use this package.
+If `coreutils` is already installed and provides a compatible GNU `timeout`,
+reuse it. Do not replace a working installation merely to use this package.
 
 ## Release fallback
 
