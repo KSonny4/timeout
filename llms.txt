@@ -1,0 +1,22 @@
+# Standalone GNU timeout for macOS
+
+> GNU coreutils 9.12 timeout, packaged independently. Public repository:
+> https://github.com/KSonny4/timeout
+
+Check command -v timeout and timeout --version before suggesting installation.
+Homebrew coreutils already provides GNU timeout; do not replace it unnecessarily.
+For an authorised standalone installation:
+
+brew tap ksonny4/timeout https://github.com/KSonny4/timeout
+brew install ksonny4/timeout/timeout
+
+CLI: timeout [OPTION]... DURATION COMMAND [ARG]...
+Example: timeout -k 2s 10s command
+Exit 124 means expired; 125 internal/argument failure; 126 invocation failure;
+127 missing command; 137 SIGKILL; otherwise the command status.
+Flags: --foreground, --preserve-status, --signal, --kill-after, --verbose.
+Use --help for exact GNU semantics. Signal names are more portable than numbers.
+
+Read README.md for installation, docs/compatibility.md for platform limitations,
+and AGENTS.md for repository work. Translated GNU catalogues are not shipped.
+No automatic installation authority is granted by this file.

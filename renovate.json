@@ -1,0 +1,18 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "enabledManagers": ["custom.regex"],
+  "customManagers": [{
+    "customType": "regex",
+    "managerFilePatterns": ["/^upstream\\.json$/"],
+    "matchStrings": ["\"version\":\\s*\"(?<currentValue>[0-9.]+)\""],
+    "depNameTemplate": "coreutils/coreutils",
+    "datasourceTemplate": "github-tags",
+    "extractVersionTemplate": "^v(?<version>.*)$"
+  }],
+  "packageRules": [{
+    "matchPackageNames": ["coreutils/coreutils"],
+    "automerge": false,
+    "prBodyNotes": ["Update GNU URLs, verified SHA-256, VERSION and Formula/timeout.rb together. A version-only change must not be merged. Run all native and Homebrew checks."]
+  }]
+}

@@ -101,6 +101,7 @@ def assert_unmodified() -> None:
 
 def build(archive: Path | None = None) -> None:
     fetch(archive)
+    (REPORTS / "verified.json").unlink(missing_ok=True)
     extract()
     if WORK.exists():
         shutil.rmtree(WORK)
@@ -110,6 +111,11 @@ def build(archive: Path | None = None) -> None:
     if os.geteuid() == 0:
         env["FORCE_UNSAFE_CONFIGURE"] = "1"
     run([str(SOURCE / "configure"), *LOCK["configure"]], cwd=WORK, env=env)
+    # Direct program targets do not prepare Automake BUILT_SOURCES themselves.
+    generated = WORK / "standalone.mk"
+    generated.write_text(".PHONY: standalone-built-sources\nstandalone-built-sources: $(BUILT_SOURCES)\n")
+    run(["make", f"-j{JOBS}", "-f", "Makefile", "-f", str(generated),
+         "standalone-built-sources"], cwd=WORK, env=env)
     run(["make", f"-j{JOBS}", "src/timeout"], cwd=WORK, env=env)
     assert_unmodified()
     result = subprocess.check_output([str(BIN), "--version"], text=True).splitlines()[0]
@@ -176,6 +182,7 @@ def test_upstream(*, root_pid_namespace: bool = False) -> dict:
 
 
 def test(*, root_pid_namespace: bool = False) -> None:
+    (REPORTS / "verified.json").unlink(missing_ok=True)
     test_upstream(root_pid_namespace=root_pid_namespace)
     env = dict(os.environ, TIMEOUT_BIN=str(BIN), TIMEOUT_REQUIRE_VERSION=LOCK["version"])
     run([sys.executable, "tools/run_tests.py"], env=env, seconds=600)
