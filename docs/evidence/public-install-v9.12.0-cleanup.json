@@ -1,0 +1,57 @@
+{
+  "kind": "Measured summary of downloaded GitHub Actions reports; not a cryptographic attestation",
+  "public_workflow_run": "https://github.com/KSonny4/timeout/actions/runs/35515616466",
+  "native_workflow_run": "https://github.com/KSonny4/timeout/actions/runs/35515616455",
+  "native_job_conclusions": {"native (macos-15)": "success", "native (macos-15-intel)": "success", "native (ubuntu-24.04)": "success", "native (ubuntu-24.04-arm)": "success", "homebrew (macos-15)": "success", "homebrew (macos-15-intel)": "success"},
+  "release": "v9.12.0",
+  "release_sha": "7668f5aef89b4d20897ccf8087f04dc3755ec4bf",
+  "harness_sha": "cad0d0052b56b902a8d2c371d06c15876f341065",
+  "gnu_version": "9.12",
+  "verification": "All four public evidence ZIP digests checked against GitHub metadata; public-install.json, contract.json and signal-stress.json inspected. Final native ARM macOS ZIP separately downloaded and its digest, contract and upstream reports checked. Other final native/Homebrew conclusions read from GitHub job/step results.",
+  "native_macos_arm64_evidence": {
+    "artifact_id": 10606887162,
+    "artifact_sha256": "b6978586aee7fccb7f2c573daf6c56b19f14176590bf19ee99f8ab49f1f54382",
+    "contract": {"tests_run": 125, "failures": 0, "errors": 0, "skips": 0},
+    "upstream_scripts": {"passed": 5, "skipped": 1, "failed": 0, "errors": 0, "missing": 0},
+    "skip": "tests/timeout/init-parent.sh requires Linux PID namespaces"
+  },
+  "signal_stress_methods": ["test_trapped_signal_preserves_custom_exit", "test_external_term_is_forwarded_without_timeout_status", "test_custom_signal_name_is_delivered", "test_signal_exit_fixture_avoids_interpreter_shutdown", "test_kill_after_terminates_term_ignoring_child"],
+  "targets": [
+    {
+      "runner": "macos-15", "system": "Darwin", "machine": "arm64",
+      "artifact_id": 10607235307,
+      "artifact_sha256": "5fc328575d5190bbdafde9eb9eda61c25e2421e7a8e036f7c5e9032d2fc8ee5c",
+      "installed_binary_bytes": 130872,
+      "public_download_install_passed": true, "overwrite_refused": true,
+      "contract": {"tests_run": 125, "failures": 0, "errors": 0, "skips": 0},
+      "signal_stress": {"repetitions": 25, "tests_run": 125, "failures": 0, "errors": 0, "skips": 0}
+    },
+    {
+      "runner": "macos-15-intel", "system": "Darwin", "machine": "x86_64",
+      "artifact_id": 10606622969,
+      "artifact_sha256": "92efe63146a73d51bf34f9cb91f9a758688bcc3b6555f18042a7802a5b766bd3",
+      "installed_binary_bytes": 113472,
+      "public_download_install_passed": true, "overwrite_refused": true,
+      "contract": {"tests_run": 125, "failures": 0, "errors": 0, "skips": 0},
+      "signal_stress": {"repetitions": 25, "tests_run": 125, "failures": 0, "errors": 0, "skips": 0}
+    },
+    {
+      "runner": "ubuntu-24.04", "system": "Linux", "machine": "x86_64",
+      "artifact_id": 10606975743,
+      "artifact_sha256": "3a8683c6d7413b663e78ce64409a29aa7a8b83d6de85bdd38742b321de5de54c",
+      "installed_binary_bytes": 207488,
+      "public_download_install_passed": true, "overwrite_refused": true,
+      "contract": {"tests_run": 125, "failures": 0, "errors": 0, "skips": 0},
+      "signal_stress": {"repetitions": 25, "tests_run": 125, "failures": 0, "errors": 0, "skips": 0}
+    },
+    {
+      "runner": "ubuntu-24.04-arm", "system": "Linux", "machine": "aarch64",
+      "artifact_id": 10606702662,
+      "artifact_sha256": "fef30c3c504f05a9d499363cb2dfd6d0f2eaf85f4a09873c0e5c6ea6ae6df45a",
+      "installed_binary_bytes": 229040,
+      "public_download_install_passed": true, "overwrite_refused": true,
+      "contract": {"tests_run": 125, "failures": 0, "errors": 0, "skips": 0},
+      "signal_stress": {"repetitions": 25, "tests_run": 125, "failures": 0, "errors": 0, "skips": 0}
+    }
+  ]
+}
