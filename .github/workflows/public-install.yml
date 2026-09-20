@@ -5,6 +5,8 @@ on:
     paths:
       - .github/workflows/public-install.yml
       - .github/workflows/release.yml
+      - tests/**
+      - tools/run_tests.py
   workflow_dispatch:
     inputs:
       version:
@@ -60,10 +62,22 @@ jobs:
               output.write(f"tag={tag}\ninstaller_sha256={assets[0]['digest'].split(':', 1)[1]}\n")
           print(f"Checking published release {tag}, release ID {release['id']}")
           PY
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Check out the verification harness
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Check out the released source separately
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ steps.release.outputs.tag }}
+          path: release-source
           persist-credentials: false
+      - name: Record harness and release identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf 'HARNESS_SHA=%s\n' "$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          printf 'RELEASE_SHA=%s\n' "$(git -C release-source rev-parse HEAD)" >> "$GITHUB_ENV"
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: '3.13'
@@ -87,8 +101,8 @@ jobs:
               raise SystemExit('Published installer digest mismatch')
           print(f'Published installer SHA-256 verified: {actual}')
           PY
-          cmp install.sh "$RUNNER_TEMP/timeout-published-install.sh"
-      - name: Install public binary and run the released contract suite
+          cmp release-source/install.sh "$RUNNER_TEMP/timeout-published-install.sh"
+      - name: Install public binary and run the current contract suite
         env:
           RELEASE_TAG: ${{ steps.release.outputs.tag }}
         shell: bash
@@ -101,7 +115,7 @@ jobs:
             2>&1 | tee "$reports/install.log"
           export TIMEOUT_BIN="$prefix/bin/timeout"
           export TIMEOUT_REQUIRE_VERSION
-          TIMEOUT_REQUIRE_VERSION=$(python3 -c 'import json; print(json.load(open("upstream.json"))["version"])')
+          TIMEOUT_REQUIRE_VERSION=$(python3 -c 'import json; print(json.load(open("release-source/upstream.json"))["version"])')
           "$TIMEOUT_BIN" --version | tee "$reports/version.txt"
           python3 tools/run_tests.py 2>&1 | tee "$reports/tests.log"
           python3 -c 'import hashlib, os; print(hashlib.sha256(open(os.environ["TIMEOUT_BIN"], "rb").read()).hexdigest())' > "$reports/binary-before.sha256"
@@ -116,6 +130,7 @@ jobs:
           import json, os, pathlib, platform
           report = {
               'release': os.environ['RELEASE_TAG'],
+              'release_sha': os.environ['RELEASE_SHA'], 'harness_sha': os.environ['HARNESS_SHA'],
               'system': platform.system(), 'machine': platform.machine(),
               'gnu_version': os.environ['TIMEOUT_REQUIRE_VERSION'],
               'installed_binary_bytes': pathlib.Path(os.environ['TIMEOUT_BIN']).stat().st_size,
@@ -126,6 +141,36 @@ jobs:
           path.write_text(json.dumps(report, indent=2) + '\n')
           print(json.dumps(report, indent=2))
           PY
+      - name: Repeat signal cases without masking failures
+        shell: bash
+        run: |
+          set -euo pipefail
+          export TIMEOUT_BIN="$RUNNER_TEMP/timeout public install/bin/timeout"
+          export TIMEOUT_REQUIRE_VERSION
+          TIMEOUT_REQUIRE_VERSION=$(python3 -c 'import json; print(json.load(open("release-source/upstream.json"))["version"])')
+          python3 - <<'PYCODE'
+          import json, os, pathlib, sys, unittest
+          sys.path.insert(0, str(pathlib.Path('tests').resolve()))
+          from test_timeout import TimeoutContract
+          names = [
+              'test_trapped_signal_preserves_custom_exit',
+              'test_external_term_is_forwarded_without_timeout_status',
+              'test_custom_signal_name_is_delivered',
+              'test_signal_exit_fixture_avoids_interpreter_shutdown',
+          ]
+          repetitions = 25
+          suite = unittest.TestSuite(TimeoutContract(name) for _ in range(repetitions) for name in names)
+          result = unittest.TextTestRunner(verbosity=1).run(suite)
+          report = {
+              'repetitions': repetitions, 'methods': names, 'tests_run': result.testsRun,
+              'failures': len(result.failures), 'errors': len(result.errors), 'skips': len(result.skipped),
+              'release_sha': os.environ['RELEASE_SHA'], 'harness_sha': os.environ['HARNESS_SHA'],
+          }
+          path = pathlib.Path(os.environ['RUNNER_TEMP']) / 'timeout-public-reports/signal-stress.json'
+          path.write_text(json.dumps(report, indent=2) + '\n')
+          print(json.dumps(report, indent=2))
+          raise SystemExit(0 if result.wasSuccessful() and not result.skipped else 1)
+          PYCODE
       - name: Retain public-install evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
