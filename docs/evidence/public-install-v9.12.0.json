@@ -1,0 +1,59 @@
+{
+  "kind": "Summary of downloaded GitHub Actions reports, not a cryptographic attestation",
+  "workflow_run": "https://github.com/KSonny4/timeout/actions/runs/35514608768",
+  "release": "v9.12.0",
+  "release_sha": "7668f5aef89b4d20897ccf8087f04dc3755ec4bf",
+  "harness_sha": "2411db902cab04acafa04a99aa52eda9d7d49078",
+  "gnu_version": "9.12",
+  "reports_inspected": ["public-install.json", "signal-stress.json", "contract.json"],
+  "targets": [
+    {
+      "runner": "macos-15",
+      "system": "Darwin",
+      "machine": "arm64",
+      "artifact_id": 10605124956,
+      "artifact_sha256": "a6bbb8575142a9bc6b352da8d5c399d1ddb38979e3bc96917eaaeb7fb40b3357",
+      "installed_binary_bytes": 130872,
+      "public_download_install_passed": true,
+      "overwrite_refused": true,
+      "contract": {"tests_run": 115, "failures": 0, "errors": 0, "skips": 0},
+      "signal_stress": {"repetitions": 25, "methods_per_repetition": 4, "tests_run": 100, "failures": 0, "errors": 0, "skips": 0}
+    },
+    {
+      "runner": "macos-15-intel",
+      "system": "Darwin",
+      "machine": "x86_64",
+      "artifact_id": 10605569584,
+      "artifact_sha256": "eaea5c81f4ee0f804a9737240409ceb0caed98ff450952220c213438350eb21f",
+      "installed_binary_bytes": 113472,
+      "public_download_install_passed": true,
+      "overwrite_refused": true,
+      "contract": {"tests_run": 115, "failures": 0, "errors": 0, "skips": 0},
+      "signal_stress": {"repetitions": 25, "methods_per_repetition": 4, "tests_run": 100, "failures": 0, "errors": 0, "skips": 0}
+    },
+    {
+      "runner": "ubuntu-24.04",
+      "system": "Linux",
+      "machine": "x86_64",
+      "artifact_id": 10605819245,
+      "artifact_sha256": "33e3e2d264cd57239d26e3f69e36c8efa46d68febd8a7b9b5e0d7ca8bdc97ff0",
+      "installed_binary_bytes": 207488,
+      "public_download_install_passed": true,
+      "overwrite_refused": true,
+      "contract": {"tests_run": 115, "failures": 0, "errors": 0, "skips": 0},
+      "signal_stress": {"repetitions": 25, "methods_per_repetition": 4, "tests_run": 100, "failures": 0, "errors": 0, "skips": 0}
+    },
+    {
+      "runner": "ubuntu-24.04-arm",
+      "system": "Linux",
+      "machine": "aarch64",
+      "artifact_id": 10606486575,
+      "artifact_sha256": "470fca88b8040546eb0e47f9f2d6d424d49ee7dde0f0c2d4bb4e316ed35fe69a",
+      "installed_binary_bytes": 229040,
+      "public_download_install_passed": true,
+      "overwrite_refused": true,
+      "contract": {"tests_run": 115, "failures": 0, "errors": 0, "skips": 0},
+      "signal_stress": {"repetitions": 25, "methods_per_repetition": 4, "tests_run": 100, "failures": 0, "errors": 0, "skips": 0}
+    }
+  ]
+}
